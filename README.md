@@ -36,7 +36,7 @@ is calculated as follows: $Pr(X_i) \times T$. Where $Pr(X_i)$ is a row vector an
 ### Intro
 This algorithm is a maximum likelihood based estimation. Given a model with its parameters and a set of observations
 we can use the forward-backward calculation to estimate the probability for all hidden states, that is: $Pr(X_i=j)$ 
-for all $i, j$. Next we simply take the arg maximum over the value, meaning: $X_i = \argmax_{j}Pr(X_i=j)$
+for all $i, j$. Next we simply take the arg maximum over the value, meaning: $X_i = arg\max_{j}Pr(X_i=j)$
 
 ### Usage
 Please refer the `reconstruction_example.py` in the example folder.
