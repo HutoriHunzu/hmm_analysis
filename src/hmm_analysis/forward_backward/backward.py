@@ -23,21 +23,14 @@ def calc_backward(data: np.ndarray, transition: np.ndarray, emission: np.ndarray
 def calc_backward_log(data: np.ndarray, transition_log: np.ndarray,
                      emission_log: np.ndarray) -> np.ndarray:
 
-    # initiate result list
-    # with np.errstate(divide="ignore"):
-
     # iterating over data and constructing f_i(k)
-
     emission_log_transpose = emission_log.T
     log_prob = np.zeros(transition_log.shape[0])
-    # res = [log_prob]
     res = np.empty(shape=(len(data), len(log_prob)))
     res[0] = log_prob
 
     for i, d in enumerate(data[1:][::-1]):
-    # for d in data[1:][::-1]:
         log_prob = logexpdot_matrix_vector(emission_log_transpose[d] + transition_log, log_prob)
-        # res.append(log_prob)
         res[i + 1] = log_prob
 
     return res[::-1]

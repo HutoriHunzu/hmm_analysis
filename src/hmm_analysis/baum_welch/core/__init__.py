@@ -1,1 +1,1 @@
-from .baum_welch import baum_welch
+from .baum_welch import baum_welch, BaumWelchResult

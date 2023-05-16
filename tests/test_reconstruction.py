@@ -21,11 +21,11 @@ def test_reconstruction():
     # preparing data
     obs = np.array(list(range(3)))
 
-    initial_log = np.log(list(start_p.values()))
-    transition_log = np.log([list(v.values()) for v in trans_p.values()])
-    emission_log = np.log([list(v.values()) for v in emit_p.values()])
+    initial = np.array(list(start_p.values()))
+    transition = np.array([list(v.values()) for v in trans_p.values()])
+    emission = np.array([list(v.values()) for v in emit_p.values()])
 
-    reconstructed_path = reconstruct(obs, transition_log, emission_log, initial_log)
+    reconstructed_path = reconstruct(obs, transition, emission, initial)
 
     # expected path
     states_to_index = {s: i for i, s in enumerate(states)}

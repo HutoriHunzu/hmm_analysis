@@ -22,24 +22,15 @@ def calc_forward(data: np.ndarray, transition: np.ndarray, emission: np.ndarray,
 def calc_forward_log(data: np.ndarray, transition_log: np.ndarray,
                      emission_log: np.ndarray, initial_log: np.ndarray) -> np.ndarray:
 
-    # initiate result list
-    # with np.errstate(divide="ignore"):
-
     # iterating over data and constructing f_i(k)
-    # res = []
     emission_log_transpose = emission_log.T
     log_prob = emission_log_transpose[data[0]] + initial_log
-    # res = np.array((log_prob, ))
-    # res = [log_prob]
     res = np.empty(shape=(len(data), len(log_prob)))
     res[0] = log_prob
 
-    # for d in data[1:]:
     for i, d in enumerate(data[1:]):
         log_prob = emission_log_transpose[d] + logexpdot_vector_matrix(log_prob, transition_log)
-        # res.append(log_prob)
         res[i + 1] = log_prob
-        # res = np.concatenate(res, log_prob)
 
     return res
 

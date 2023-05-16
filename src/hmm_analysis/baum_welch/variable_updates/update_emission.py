@@ -18,15 +18,10 @@ def calc_updated_emission_log(data: np.ndarray, state_prob_log: np.ndarray, emis
 
     denomenator = logsumexp_2d(state_prob_log.T)
 
-    # res = []
     numerator = np.empty(shape=(emission_shape[1], emission_shape[0]))
-    # for i in range(emission_range):
     for i in range(emission_shape[1]):
-        # res.append(logsumexp_2d(state_prob_log[data == i].T))
         numerator[i] = logsumexp_2d(state_prob_log[data == i].T)
 
-    # numerator = np.array(res).T
-    # numerator = np.array(res).T
     return numerator.T - denomenator[:, None]
 
 

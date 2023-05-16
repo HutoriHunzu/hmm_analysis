@@ -11,8 +11,6 @@ def estimate_hidden_transition_log(data, forward_log, backward_log, transition_l
 
     transition_prob_log = calc_transition_prob_log(data, forward_log, backward_log, transition_log, emission_log,
                                                    norm=norm)
-    # transition_prob_log = np.array(transition_prob_log)
-    # print(f'SHAPE from result: {transition_prob_log.shape}')
 
     return hidden_state_prob_log, transition_prob_log
 

@@ -4,7 +4,6 @@ from .update_emission import calc_updated_emission_log, calc_updated_emission
 from numba import jit
 
 
-# def update_variables_log(data, hidden_state_prob_log, transition_prob_log, emission_log):
 @jit(nopython=True, fastmath=True, cache=True)
 def update_variables_log(data, hidden_state_prob_log, transition_prob_log, emission_log):
     # updated variables - transition, emission, and initial

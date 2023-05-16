@@ -20,9 +20,6 @@ def calc_hidden_state_prob_log(forward_lst_log: np.ndarray, backward_lst_log: np
                                norm=None):
 
     # this is the probability to the observables (shouldn't depend on t)
-    # data_prob = np.sum(forward_lst * backward_lst, axis=1)
-    # initiate result list
-    # with np.errstate(divide="ignore"):
     if not norm:
         norm = likelihood_log(forward_lst_log, backward_lst_log)
 

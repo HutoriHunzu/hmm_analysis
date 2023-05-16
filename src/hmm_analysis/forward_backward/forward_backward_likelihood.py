@@ -9,7 +9,6 @@ from numba import jit
 def get_forward_backward_likelihood_log(data, initial_log, transition_log, emission_log):
     forwards_log = calc_forward_log(data, transition_log, emission_log, initial_log)
     backwards_log = calc_backward_log(data, transition_log, emission_log)
-    # forwards_log, backwards_log = np.array(forwards_log), np.array(backwards_log)
 
     # calculating the likelihood, will serve as norm and as convergence parameter
     norm = likelihood_log(forwards_log, backwards_log)

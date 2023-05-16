@@ -17,9 +17,9 @@ def test_update_baum_welch(arrange_data):
     data, transition, emission, initial, expected_transition, expected_emission = arrange_data
 
     # calculate backward
-    updated_transition, updated_emission, updated_initial = baum_welch(data, transition, emission, initial, niters=1)
+    result = baum_welch(data, transition, emission, initial, niters=1)
 
     # assert
-    assert_result(expected_transition, updated_transition)
-    assert_result(expected_emission, updated_emission)
+    assert_result(expected_transition, result.transition)
+    assert_result(expected_emission, result.emission)
 

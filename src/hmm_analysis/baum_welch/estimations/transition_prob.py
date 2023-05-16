@@ -52,7 +52,6 @@ def calc_transition_prob_log(data: np.ndarray, forward_lst_log: np.ndarray,
     rows, cols = shifted_forward_log.shape
 
     # calculate the emission times backward column vector
-    # result = []
     res = np.empty(shape=(rows, cols, cols))
     for i, d in enumerate(data[1:]):
         m = emission_log.T[d]
@@ -60,7 +59,6 @@ def calc_transition_prob_log(data: np.ndarray, forward_lst_log: np.ndarray,
         row_vec = m + b
         column_vec = shifted_forward_log
 
-        # result.append(column_vec[i].reshape(cols, -1) + row_vec + transition_log - norm)
         res[i] = column_vec[i].reshape(cols, -1) + row_vec + transition_log - norm
 
     # return result
