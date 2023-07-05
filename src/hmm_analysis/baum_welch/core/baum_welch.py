@@ -1,15 +1,17 @@
 import numpy as np
 from tqdm import tqdm
 from typing import Optional, Union, List
+from numpy.typing import NDArray
 from hmm_analysis.utils.proximity import check_proximity
 from hmm_analysis.utils.casting import cast_log
-from .baum_welch_step import step
+from .baum_welch_step import step, step_multi_sequences
 from .baum_welch_result import list_of_log_estimations_to_bw_results, BaumWelchResult
 
 
-def baum_welch(data: np.ndarray, transition: np.ndarray, emission: np.ndarray,
-               initial: np.ndarray, niters: int, convergence_tol: Optional[float] = None,
-               keep_all_results: bool = False) -> Union[List[BaumWelchResult], BaumWelchResult]:
+def baum_welch(data: Union[NDArray, List[NDArray]], transition: NDArray, emission: NDArray,
+               initial: NDArray, niters: int, convergence_tol: Optional[float] = None,
+               keep_all_results: bool = False, multi_sequence: bool = False) -> Union[List[BaumWelchResult],
+                                                                                      BaumWelchResult]:
 
     # casting all parameters to log
     transition, emission, initial = cast_log(transition, emission, initial)
@@ -22,8 +24,12 @@ def baum_welch(data: np.ndarray, transition: np.ndarray, emission: np.ndarray,
     for i in tqdm(range(niters)):
 
         # these are log version of transition, emission and initial
-        transition, emission, initial, likelihood_log = step(data, transition,
-                                                             emission, initial)
+        if multi_sequence:
+            transition, emission, initial, likelihood_log = step_multi_sequences(data, transition,
+                                                                                 emission, initial)
+        else:
+            transition, emission, initial, likelihood_log = step(data, transition,
+                                                                 emission, initial)
 
         # updating data
         results.append((transition, emission, initial, likelihood_log))
