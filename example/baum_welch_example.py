@@ -7,7 +7,7 @@ Going over the usage of Baum-Welch algorithm.
 The inputs will be some guesses about the parameters of the model and a sequence of observations.
 The function should return a new set of model parameters that would maximize likelihood.
 
-NOTE: this implementation is log based, thus all model parameters should be passed with log 
+NOTE: this implementation is log based, and all model parameters are log casted INSIDE the function
 """
 
 
@@ -19,8 +19,34 @@ and let the algorithm to estimate them only given observation:
 """
 
 initial_raw = np.array([0.6, 0.4])
-transition_matrix = np.array([[0.7, 0.3], [0.4, 0.6]])
-emission_matrix = np.array([[0.5, 0.4, 0.1], [0.1, 0.3, 0.6]])
+"""
+Initial probabilities:
+Defines probabilities of starting in each hidden state.
+Shape: (N,)
+Where N is the number of possible hidden states.
+Entry A[i] = P(state_0 = i)
+In this example we have two hidden states: Healthy and Fever.
+"""
+transition_matrix = np.array([[0.7, 0.3],
+                              [0.4, 0.6]])
+"""
+Transition matrix:
+Defines probabilities of moving between hidden states.
+Shape: (N, N)
+Entry A[i, j] = P(state_t = j | state_{t-1} = i)
+Rows must sum to 1.
+"""
+emission_matrix = np.array([[0.5, 0.4, 0.1],
+                            [0.1, 0.3, 0.6]])
+"""
+Emission matrix:
+Defines probabilities of observing each symbol from a given hidden state.
+Shape: (N, M)
+Where M is the number of possible observations.
+Entry B[i, k] = P(observation = k | state = i)
+Rows must sum to 1.
+In this example we have three possible observations: normal, cold, dizzy.
+"""
 
 true_states = []
 prev_state_prob = initial_raw
