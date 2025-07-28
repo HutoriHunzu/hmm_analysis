@@ -17,8 +17,10 @@ and let the algorithm to estimate them only given observation:
 """
 
 initial_raw = np.array([0.9, 0.1])
-transition_matrix = np.array([[0.9, 0.1], [0.2, 0.8]])
-emission_matrix = np.array([[0.9, 0.1], [0.05, 0.95]])
+transition_matrix = np.array([[0.9, 0.1],
+                              [0.2, 0.8]])
+emission_matrix = np.array([[0.9, 0.1],
+                            [0.05, 0.95]])
 data = []
 for _ in range(100):
     true_states = []
