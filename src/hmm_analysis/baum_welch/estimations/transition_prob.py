@@ -59,7 +59,11 @@ def calc_transition_prob_log(data: np.ndarray, forward_lst_log: np.ndarray,
         row_vec = m + b
         column_vec = shifted_forward_log
 
-        res[i] = column_vec[i].reshape(cols, -1) + row_vec + transition_log - norm
+        # handle edge case where data is very short
+        if i < len(column_vec):
+            res[i] = column_vec[i].reshape(cols, -1) + row_vec + transition_log - norm
+        else:
+            res[i] = np.full((cols, cols), -np.inf)
 
     # return result
     return res

@@ -63,7 +63,17 @@ def _calc_updated_emission_log_numerator_denominator(data: np.ndarray, state_pro
 
     numerator = np.empty(shape=(emission_shape[1], emission_shape[0]))
     for i in range(emission_shape[1]):
-        numerator[i] = logsumexp_2d(state_prob_log[data == i].T)
+        # Create boolean mask for filtering
+        mask = data == i
+        filtered_indices = np.where(mask)[0]
+        
+        if len(filtered_indices) == 0:
+            # No observations for this emission symbol
+            numerator[i] = np.full(emission_shape[0], -np.inf)
+        else:
+            # Extract rows using indices to avoid empty array creation
+            filtered_data = state_prob_log[filtered_indices]
+            numerator[i] = logsumexp_2d(filtered_data.T)
 
     return numerator.T, denomenator[:, None]
 

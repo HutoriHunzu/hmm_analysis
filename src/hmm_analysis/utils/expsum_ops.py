@@ -27,8 +27,19 @@ def logsumexp_2d(m: np.ndarray):
     :param m: 2D numpy array
     :return: logsumexp of each row in the 2D array
     """
+    # handle empty array case - numba-safe checks
+    if m.shape[0] == 0:
+        # Return empty array with correct dtype
+        return np.empty(0, dtype=np.float64)
+    if m.shape[1] == 0:
+        # Return array of -inf for each row when columns are empty
+        return np.full(m.shape[0], -np.inf)
+    
     # find maximum
-    return np.array([logsumexp_1d(row) for row in m])
+    result = np.empty(m.shape[0])
+    for i in range(m.shape[0]):
+        result[i] = logsumexp_1d(m[i])
+    return result
 
 
 @jit(cache=True, nopython=True, fastmath=True)
@@ -39,6 +50,9 @@ def logsumexp_1d(m: np.ndarray):
     :param m: 1D numpy array
     :return: logsumexp of 1D array
     """
+    # handle empty array case - numba-safe check
+    if len(m) == 0:
+        return -np.inf
     # find maximum
     max_scalar = np.max(m)
     if max_scalar == -np.inf:
