@@ -18,30 +18,41 @@ def calc_updated_transition(transition_prob: np.ndarray, state_prob: np.ndarray)
 #
 #     return numerator - denominator[:, None]
 
-@jit(nopython=True, fastmath=True, cache=True)
-def calc_updated_transition_log(transition_prob_log: np.ndarray, state_prob_log: np.ndarray):
 
-    numerator, denominator = _calc_updated_transition_log_numerator_denominator(transition_prob_log,
-                                                                                state_prob_log)
+@jit(nopython=True, fastmath=True, cache=True)
+def calc_updated_transition_log(
+    transition_prob_log: np.ndarray, state_prob_log: np.ndarray
+):
+    numerator, denominator = _calc_updated_transition_log_numerator_denominator(
+        transition_prob_log, state_prob_log
+    )
 
     return numerator - denominator
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def calc_updated_transition_log_multi_sequence(transition_prob_log_lst: np.ndarray,
-                                               state_prob_log_lst: np.ndarray):
-
-    numerators, denominators = np.empty((len(transition_prob_log_lst), transition_prob_log_lst[0].shape[1],
-                                         transition_prob_log_lst[0].shape[2])), \
-                               np.empty((len(transition_prob_log_lst), state_prob_log_lst[0].shape[1], 1))
+def calc_updated_transition_log_multi_sequence(
+    transition_prob_log_lst: np.ndarray, state_prob_log_lst: np.ndarray
+):
+    numerators, denominators = (
+        np.empty(
+            (
+                len(transition_prob_log_lst),
+                transition_prob_log_lst[0].shape[1],
+                transition_prob_log_lst[0].shape[2],
+            )
+        ),
+        np.empty((len(transition_prob_log_lst), state_prob_log_lst[0].shape[1], 1)),
+    )
 
     # for transition_prob_log, state_prob_log in zip(transition_prob_log_lst, state_prob_log_lst):
     for i in range(len(transition_prob_log_lst)):
         transition_prob_log = transition_prob_log_lst[i]
         state_prob_log = state_prob_log_lst[i]
 
-        numerator, denominator = _calc_updated_transition_log_numerator_denominator(transition_prob_log,
-                                                                                    state_prob_log)
+        numerator, denominator = _calc_updated_transition_log_numerator_denominator(
+            transition_prob_log, state_prob_log
+        )
         numerators[i] = numerator
         denominators[i] = denominator
 
@@ -52,18 +63,20 @@ def calc_updated_transition_log_multi_sequence(transition_prob_log_lst: np.ndarr
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def _calc_updated_transition_log_numerator_denominator(transition_prob_log: np.ndarray,
-                                                       state_prob_log: np.ndarray):
+def _calc_updated_transition_log_numerator_denominator(
+    transition_prob_log: np.ndarray, state_prob_log: np.ndarray
+):
     shape = transition_prob_log.shape
 
-    numerator = logsumexp_2d(transition_prob_log.reshape(-1, shape[1] * shape[2]).T).reshape(shape[1], shape[2])
+    numerator = logsumexp_2d(
+        transition_prob_log.reshape(-1, shape[1] * shape[2]).T
+    ).reshape(shape[1], shape[2])
     denominator = logsumexp_2d(state_prob_log[:-1].T)[:, None]
     return numerator, denominator
 
 
 def calc_updated_transition_logexp(transition_prob: np.ndarray, state_prob: np.ndarray):
     with np.errstate(divide="ignore"):
-
         transition_prob_log = np.log(transition_prob)
         state_prob_log = np.log(state_prob)
 

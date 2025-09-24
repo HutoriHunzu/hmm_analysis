@@ -2,7 +2,8 @@ import numpy as np
 from numpy.typing import NDArray
 from numba import jit
 
-MINUS_INF = -2 ** 32
+MINUS_INF = -(2**32)
+
 
 @jit(cache=True, nopython=True, fastmath=True)
 def logsumexp_3d(m: NDArray):
@@ -36,7 +37,7 @@ def logsumexp_2d(m: NDArray):
     if m.shape[1] == 0:
         # Return array of -inf for each row when columns are empty
         return np.full(m.shape[0], -np.inf)
-    
+
     # find maximum
     result = np.empty(m.shape[0])
     for i in range(m.shape[0]):
@@ -55,12 +56,12 @@ def logsumexp_1d(m: NDArray):
     # handle empty array case - numba-safe check
     if len(m) == 0:
         return -np.inf
-    
+
     # find maximum
     max_scalar = np.max(m)
     if max_scalar < MINUS_INF:
         return -np.inf
-    
+
     # sub the max from the matrix
     m = m - max_scalar
 
@@ -72,6 +73,7 @@ def logsumexp_1d(m: NDArray):
 def logexpdot_matrix_vector(m: NDArray, v: NDArray):
     return logsumexp_2d(m + v)
 
+
 @jit(cache=True, nopython=True, fastmath=True)
 def logexpdot_vector_matrix(v: NDArray, m: NDArray):
     return logsumexp_2d(m.T + v)
@@ -82,7 +84,7 @@ def logexpdot_matrix_matrix(a: NDArray, b: NDArray):
     res = np.zeros((a.shape[0], b.shape[1]))
     b_t = b.T
     for i in range(a.shape[0]):
-        res[i] = (logexpdot_matrix_vector(b_t, a[i]))
+        res[i] = logexpdot_matrix_vector(b_t, a[i])
     # return np.array(res)
     return res
 

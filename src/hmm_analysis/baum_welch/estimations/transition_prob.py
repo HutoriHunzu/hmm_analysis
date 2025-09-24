@@ -3,10 +3,14 @@ from numba import jit
 from hmm_analysis.forward_backward.likelihood import likelihood_log, likelihood
 
 
-def calc_transition_prob(data: np.ndarray, forward_lst: np.ndarray,
-                         backward_lst: np.ndarray, transition: np.ndarray,
-                         emission: np.ndarray, norm=None):
-
+def calc_transition_prob(
+    data: np.ndarray,
+    forward_lst: np.ndarray,
+    backward_lst: np.ndarray,
+    transition: np.ndarray,
+    emission: np.ndarray,
+    norm=None,
+):
     # norm
     if not norm:
         norm = likelihood(forward_lst, backward_lst)
@@ -25,7 +29,12 @@ def calc_transition_prob(data: np.ndarray, forward_lst: np.ndarray,
     r_vec = np.array(r_vec)
 
     # outer product of the column vector and the row vector
-    q_lst = np.array([np.outer(left_vec, right_vec) for left_vec, right_vec in zip(shifted_forward, r_vec)])
+    q_lst = np.array(
+        [
+            np.outer(left_vec, right_vec)
+            for left_vec, right_vec in zip(shifted_forward, r_vec)
+        ]
+    )
 
     # element wise multiplication with transition with norm
     q_lst = np.array([elem * transition / norm for elem in q_lst])
@@ -34,10 +43,14 @@ def calc_transition_prob(data: np.ndarray, forward_lst: np.ndarray,
 
 
 @jit(cache=True, nopython=True, fastmath=True)
-def calc_transition_prob_log(data: np.ndarray, forward_lst_log: np.ndarray,
-                             backward_lst_log: np.ndarray, transition_log: np.ndarray,
-                             emission_log: np.ndarray, norm=None) -> np.ndarray:
-
+def calc_transition_prob_log(
+    data: np.ndarray,
+    forward_lst_log: np.ndarray,
+    backward_lst_log: np.ndarray,
+    transition_log: np.ndarray,
+    emission_log: np.ndarray,
+    norm=None,
+) -> np.ndarray:
     # norm
     if not norm:
         norm = likelihood_log(forward_lst_log, backward_lst_log)
@@ -68,10 +81,13 @@ def calc_transition_prob_log(data: np.ndarray, forward_lst_log: np.ndarray,
     return res
 
 
-def calc_transition_prob_logexp(data: np.ndarray, forward_lst: np.ndarray,
-                                backward_lst: np.ndarray, transition: np.ndarray,
-                                emission: np.ndarray):
-
+def calc_transition_prob_logexp(
+    data: np.ndarray,
+    forward_lst: np.ndarray,
+    backward_lst: np.ndarray,
+    transition: np.ndarray,
+    emission: np.ndarray,
+):
     # making log
     with np.errstate(divide="ignore"):
         forward_lst_log = np.log(forward_lst)
@@ -79,9 +95,9 @@ def calc_transition_prob_logexp(data: np.ndarray, forward_lst: np.ndarray,
         transition_log = np.log(transition)
         emission_log = np.log(emission)
 
-        result = calc_transition_prob_log(data, forward_lst_log, backward_lst_log,
-                                          transition_log, emission_log)
+        result = calc_transition_prob_log(
+            data, forward_lst_log, backward_lst_log, transition_log, emission_log
+        )
 
     result = np.exp(result)
     return result
-

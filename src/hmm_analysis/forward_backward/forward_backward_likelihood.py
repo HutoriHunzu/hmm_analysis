@@ -6,7 +6,9 @@ from numba import jit
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def get_forward_backward_likelihood_log(data, initial_log, transition_log, emission_log):
+def get_forward_backward_likelihood_log(
+    data, initial_log, transition_log, emission_log
+):
     forwards_log = calc_forward_log(data, transition_log, emission_log, initial_log)
     backwards_log = calc_backward_log(data, transition_log, emission_log)
 
@@ -25,4 +27,3 @@ def get_forward_backward_likelihood(data, initial, transition, emission):
     norm = likelihood(forwards, backwards)
 
     return forwards, backwards, norm
-

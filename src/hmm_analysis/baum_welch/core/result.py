@@ -5,7 +5,6 @@ from numpy.typing import NDArray
 
 @dataclass
 class BaumWelchResult:
-
     transition: NDArray
     emission: NDArray
     initial: NDArray
@@ -21,6 +20,7 @@ def list_of_log_estimations_to_bw_results(list_of_log_estimations):
                 transition=transition,
                 emission=emission,
                 initial=initial,
-                likelihood_log=likelihood_log
+                likelihood_log=likelihood_log,
             )
+
     return list(_helper())

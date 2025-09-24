@@ -5,13 +5,16 @@ from hmm_analysis.utils.expsum_ops import logsumexp_2d, logsumexp_3d
 from numba import jit
 
 
-def calc_updated_emission(data: np.ndarray, state_prob: np.ndarray, emission_shape: int):
+def calc_updated_emission(
+    data: np.ndarray, state_prob: np.ndarray, emission_shape: int
+):
     denomenator = np.sum(state_prob, axis=0)
     res = []
     for i in range(emission_shape[1]):
         res.append(np.sum(state_prob[data == i], axis=0))
     numerator = np.array(res).T
     return (numerator.T / denomenator).T
+
 
 #
 # @jit(nopython=True, fastmath=True, cache=True)
@@ -27,26 +30,33 @@ def calc_updated_emission(data: np.ndarray, state_prob: np.ndarray, emission_sha
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def calc_updated_emission_log(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: tuple[int, int]):
-
-    numerator, denominator = _calc_updated_emission_log_numerator_denominator(data, state_prob_log, emission_shape)
+def calc_updated_emission_log(
+    data: np.ndarray, state_prob_log: np.ndarray, emission_shape: tuple[int, int]
+):
+    numerator, denominator = _calc_updated_emission_log_numerator_denominator(
+        data, state_prob_log, emission_shape
+    )
     return numerator - denominator
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def calc_updated_emission_log_multi_sequence(data_lst: np.ndarray, state_prob_log_lst: np.ndarray,
-                                             emission_shape: tuple[int, int]):
-
-    numerators, denominators = np.empty((len(data_lst), emission_shape[0], emission_shape[1])), \
-                               np.empty((len(data_lst), state_prob_log_lst[0].shape[1], 1))
+def calc_updated_emission_log_multi_sequence(
+    data_lst: np.ndarray,
+    state_prob_log_lst: np.ndarray,
+    emission_shape: tuple[int, int],
+):
+    numerators, denominators = (
+        np.empty((len(data_lst), emission_shape[0], emission_shape[1])),
+        np.empty((len(data_lst), state_prob_log_lst[0].shape[1], 1)),
+    )
 
     for i in range(len(data_lst)):
-    # for data, state_prob_log in zip(data_lst, state_prob_log_lst):
+        # for data, state_prob_log in zip(data_lst, state_prob_log_lst):
         data = data_lst[i]
         state_prob_log = state_prob_log_lst[i]
-        numerator, denominator = _calc_updated_emission_log_numerator_denominator(data,
-                                                                                  state_prob_log,
-                                                                                  emission_shape)
+        numerator, denominator = _calc_updated_emission_log_numerator_denominator(
+            data, state_prob_log, emission_shape
+        )
         numerators[i] = numerator
         denominators[i] = denominator
 
@@ -58,8 +68,9 @@ def calc_updated_emission_log_multi_sequence(data_lst: np.ndarray, state_prob_lo
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def _calc_updated_emission_log_numerator_denominator(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: tuple[int, int]):
-
+def _calc_updated_emission_log_numerator_denominator(
+    data: np.ndarray, state_prob_log: np.ndarray, emission_shape: tuple[int, int]
+):
     denomenator = logsumexp_2d(state_prob_log.T)
 
     numerator = np.empty(shape=(emission_shape[1], emission_shape[0]))
@@ -67,7 +78,7 @@ def _calc_updated_emission_log_numerator_denominator(data: np.ndarray, state_pro
         # Create boolean mask for filtering
         mask = data == i
         filtered_indices = np.where(mask)[0]
-        
+
         if len(filtered_indices) == 0:
             # No observations for this emission symbol
             numerator[i] = np.full(emission_shape[0], -np.inf)
@@ -79,11 +90,11 @@ def _calc_updated_emission_log_numerator_denominator(data: np.ndarray, state_pro
     return numerator.T, denomenator[:, None]
 
 
-def calc_updated_emission_logexp(data: np.ndarray, state_prob: np.ndarray, emission_shape: int):
-
+def calc_updated_emission_logexp(
+    data: np.ndarray, state_prob: np.ndarray, emission_shape: int
+):
     with np.errstate(divide="ignore"):
         state_prob_log = np.log(state_prob)
         result = calc_updated_emission_log(data, state_prob_log, emission_shape)
 
     return np.exp(result)
-

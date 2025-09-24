@@ -24,4 +24,3 @@ def calc_updated_initial_log_multi_sequence(state_prob_log_lst: list[np.ndarray]
     #     result += elem[0]
     return result - np.log(len(state_prob_log_lst))
     # return sum([elem[0] for elem in state_prob_log_lst]) / len(state_prob_log_lst)
-

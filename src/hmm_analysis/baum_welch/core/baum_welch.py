@@ -7,8 +7,13 @@ from .step import baum_welch_iter as _baum_welch_iter
 from .result import list_of_log_estimations_to_bw_results, BaumWelchResult
 
 
-def baum_welch_iter(data: NDArray | list[NDArray], transition: NDArray, emission: NDArray,
-                    initial: NDArray, multi_sequence: bool = False):
+def baum_welch_iter(
+    data: NDArray | list[NDArray],
+    transition: NDArray,
+    emission: NDArray,
+    initial: NDArray,
+    multi_sequence: bool = False,
+):
     """Infinite iterator for Baum-Welch algorithm that yields results per iteration.
 
     This is a clean, infinite iterator with no stopping criteria - users have full control
@@ -26,16 +31,23 @@ def baum_welch_iter(data: NDArray | list[NDArray], transition: NDArray, emission
         BaumWelchResult: Result object for each iteration with updated parameters
     """
     for transition_log, emission_log, initial_log, likelihood_log in _baum_welch_iter(
-            data, transition, emission, initial, multi_sequence):
+        data, transition, emission, initial, multi_sequence
+    ):
         # Convert back to regular space for result
         result_data = [(transition_log, emission_log, initial_log, likelihood_log)]
         result = list_of_log_estimations_to_bw_results(result_data)[0]
         yield result
 
 
-def baum_welch(data: NDArray | list[NDArray], transition: NDArray, emission: NDArray,
-               initial: NDArray, niters: int, tqdm_on: bool = True,
-               multi_sequence: bool = False) -> BaumWelchResult:
+def baum_welch(
+    data: NDArray | list[NDArray],
+    transition: NDArray,
+    emission: NDArray,
+    initial: NDArray,
+    niters: int,
+    tqdm_on: bool = True,
+    multi_sequence: bool = False,
+) -> BaumWelchResult:
     """Baum-Welch algorithm for Hidden Markov Model parameter estimation.
 
     Estimates HMM parameters (transition, emission, initial probabilities) using
@@ -55,7 +67,9 @@ def baum_welch(data: NDArray | list[NDArray], transition: NDArray, emission: NDA
         BaumWelchResult: Final parameter estimates after niters iterations
     """
     # Create infinite iterator and limit to niters
-    infinite_iterator = baum_welch_iter(data, transition, emission, initial, multi_sequence)
+    infinite_iterator = baum_welch_iter(
+        data, transition, emission, initial, multi_sequence
+    )
     limited_iterator = itertools.islice(infinite_iterator, niters)
 
     if tqdm_on:
@@ -67,4 +81,3 @@ def baum_welch(data: NDArray | list[NDArray], transition: NDArray, emission: NDA
         final_result = result
 
     return final_result
-
