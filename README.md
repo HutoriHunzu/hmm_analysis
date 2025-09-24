@@ -71,6 +71,20 @@ See the `examples/` directory for detailed usage patterns:
 - `reconstruction_example.py` - Hidden state inference
 - `multi_sequence_example.py` - Multiple observation sequences
 
+## Citation
+
+If you use this software in your research, please cite it using the information provided in the repository's `CITATION.cff` file, or use the following BibTeX entry:
+
+```bibtex
+@software{goldblatt2025hmm,
+  title = {HMM Analysis Toolkit: Fast Hidden Markov Model Analysis with Numba},
+  author = {Goldblatt, Uri},
+  year = {2025},
+  url = {https://github.com/HutoriHunzu/hmm_analysis},
+  version = {0.1.0}
+}
+```
+
 ## Algorithm Reference
 
 For theoretical background, see: https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm

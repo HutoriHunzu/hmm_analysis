@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "HMM Analysis Toolkit"
+abstract: "A fast Python package for Hidden Markov Model analysis using NumPy and Numba. Implements the Baum-Welch algorithm for parameter estimation and forward-backward reconstruction for hidden state inference."
+authors:
+  - family-names: "Goldblatt"
+    given-names: "Uri"
+    email: "uri.goldblatt@gmail.com"
+    orcid: "https://orcid.org/0009-0001-3258-6881"
+repository-code: "https://github.com/HutoriHunzu/hmm_analysis"
+url: "https://github.com/HutoriHunzu/hmm_analysis"
+license: MIT
+version: "0.1.0"
+date-released: "2025-01-25"
+keywords:
+  - "hidden markov model"
+  - "baum-welch"
+  - "viterbi"
+  - "numba"
+  - "machine learning"
+  - "parameter estimation"
+  - "forward-backward"
+preferred-citation:
+  type: software
+  title: "HMM Analysis Toolkit: Fast Hidden Markov Model Analysis with Numba"
+  authors:
+    - family-names: "Goldblatt"
+      given-names: "Uri"
+      email: "uri.goldblatt@gmail.com"
+  year: 2025
+  url: "https://github.com/HutoriHunzu/hmm_analysis"
+  version: "0.1.0"
