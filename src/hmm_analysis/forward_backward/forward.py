@@ -31,7 +31,7 @@ def calc_forward_log(data: np.ndarray, transition_log: np.ndarray,
     for i, d in enumerate(data[1:]):
         log_prob = emission_log_transpose[d] + logexpdot_vector_matrix(log_prob, transition_log)
         res[i + 1] = log_prob
-
+        
     return res
 
 

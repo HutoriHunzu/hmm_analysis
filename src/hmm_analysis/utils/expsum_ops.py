@@ -1,6 +1,8 @@
+from tkinter import N
 import numpy as np
 from numba import jit
 
+MINUS_INF = -2 ** 32
 
 @jit(cache=True, nopython=True, fastmath=True)
 def logsumexp_3d(m: np.ndarray):
@@ -53,11 +55,12 @@ def logsumexp_1d(m: np.ndarray):
     # handle empty array case - numba-safe check
     if len(m) == 0:
         return -np.inf
+    
     # find maximum
     max_scalar = np.max(m)
-    if max_scalar == -np.inf:
+    if max_scalar < MINUS_INF:
         return -np.inf
-
+    
     # sub the max from the matrix
     m = m - max_scalar
 

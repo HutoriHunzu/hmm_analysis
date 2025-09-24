@@ -23,8 +23,10 @@ def test_backward(arrange_data):
     assert_result(expected_result, result)
 
 
+
 def test_backward_logexp(arrange_data):
     data, transition, emission, expected_result = arrange_data
+
 
     # calculate backward
     with np.errstate(divide="ignore"):
