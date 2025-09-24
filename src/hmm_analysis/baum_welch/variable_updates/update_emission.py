@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import numpy as np
 from hmm_analysis.utils.expsum_ops import logsumexp_2d, logsumexp_3d
 from numba import jit
-from typing import Tuple
 
 
 def calc_updated_emission(data: np.ndarray, state_prob: np.ndarray, emission_shape: int):
@@ -14,7 +15,7 @@ def calc_updated_emission(data: np.ndarray, state_prob: np.ndarray, emission_sha
 
 #
 # @jit(nopython=True, fastmath=True, cache=True)
-# def calc_updated_emission_log(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: Tuple[int, int]):
+# def calc_updated_emission_log(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: tuple[int, int]):
 #
 #     denomenator = logsumexp_2d(state_prob_log.T)
 #
@@ -26,7 +27,7 @@ def calc_updated_emission(data: np.ndarray, state_prob: np.ndarray, emission_sha
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def calc_updated_emission_log(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: Tuple[int, int]):
+def calc_updated_emission_log(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: tuple[int, int]):
 
     numerator, denominator = _calc_updated_emission_log_numerator_denominator(data, state_prob_log, emission_shape)
     return numerator - denominator
@@ -34,7 +35,7 @@ def calc_updated_emission_log(data: np.ndarray, state_prob_log: np.ndarray, emis
 
 @jit(nopython=True, fastmath=True, cache=True)
 def calc_updated_emission_log_multi_sequence(data_lst: np.ndarray, state_prob_log_lst: np.ndarray,
-                                             emission_shape: Tuple[int, int]):
+                                             emission_shape: tuple[int, int]):
 
     numerators, denominators = np.empty((len(data_lst), emission_shape[0], emission_shape[1])), \
                                np.empty((len(data_lst), state_prob_log_lst[0].shape[1], 1))
@@ -57,13 +58,23 @@ def calc_updated_emission_log_multi_sequence(data_lst: np.ndarray, state_prob_lo
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def _calc_updated_emission_log_numerator_denominator(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: Tuple[int, int]):
+def _calc_updated_emission_log_numerator_denominator(data: np.ndarray, state_prob_log: np.ndarray, emission_shape: tuple[int, int]):
 
     denomenator = logsumexp_2d(state_prob_log.T)
 
     numerator = np.empty(shape=(emission_shape[1], emission_shape[0]))
     for i in range(emission_shape[1]):
-        numerator[i] = logsumexp_2d(state_prob_log[data == i].T)
+        # Create boolean mask for filtering
+        mask = data == i
+        filtered_indices = np.where(mask)[0]
+        
+        if len(filtered_indices) == 0:
+            # No observations for this emission symbol
+            numerator[i] = np.full(emission_shape[0], -np.inf)
+        else:
+            # Extract rows using indices to avoid empty array creation
+            filtered_data = state_prob_log[filtered_indices]
+            numerator[i] = logsumexp_2d(filtered_data.T)
 
     return numerator.T, denomenator[:, None]
 

@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from hmm_analysis.utils.casting import cast_exp
-import numpy as np
+from numpy.typing import NDArray
 
 
 @dataclass
 class BaumWelchResult:
 
-    transition: np.ndarray
-    emission: np.ndarray
-    initial: np.ndarray
+    transition: NDArray
+    emission: NDArray
+    initial: NDArray
     likelihood_log: float
 
 

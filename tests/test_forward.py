@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 
-KEYS = ('sequence', 'transition', 'emission', 'initial', 'forward')
+KEYS = ("sequence", "transition", "emission", "initial", "forward")
 
 
 @pytest.fixture(params=generate_filtered_data(set(KEYS)))
@@ -28,12 +28,10 @@ def test_forward_logexp(arrange_data):
 
     # calculate backward
     with np.errstate(divide="ignore"):
-        transition, emission, initial = list(map(np.log, [transition, emission, initial]))
+        transition, emission, initial = list(
+            map(np.log, [transition, emission, initial])
+        )
         result = calc_forward_log(data, transition, emission, initial)
 
         # assert
         assert_result_log(expected_result, result)
-
-
-
-

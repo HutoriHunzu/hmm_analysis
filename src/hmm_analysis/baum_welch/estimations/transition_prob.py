@@ -25,8 +25,7 @@ def calc_transition_prob(data: np.ndarray, forward_lst: np.ndarray,
     r_vec = np.array(r_vec)
 
     # outer product of the column vector and the row vector
-    q_lst = np.array([np.outer(l, r) for l, r in zip(shifted_forward, r_vec)])
-    print(f'{q_lst[0]=}')
+    q_lst = np.array([np.outer(left_vec, right_vec) for left_vec, right_vec in zip(shifted_forward, r_vec)])
 
     # element wise multiplication with transition with norm
     q_lst = np.array([elem * transition / norm for elem in q_lst])
@@ -59,7 +58,11 @@ def calc_transition_prob_log(data: np.ndarray, forward_lst_log: np.ndarray,
         row_vec = m + b
         column_vec = shifted_forward_log
 
-        res[i] = column_vec[i].reshape(cols, -1) + row_vec + transition_log - norm
+        # handle edge case where data is very short
+        if i < len(column_vec):
+            res[i] = column_vec[i].reshape(cols, -1) + row_vec + transition_log - norm
+        else:
+            res[i] = np.full((cols, cols), -np.inf)
 
     # return result
     return res
