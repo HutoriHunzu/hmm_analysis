@@ -1,7 +1,7 @@
-from typing import Optional
+from __future__ import annotations
 
 
-def check_proximity(a: float, b: float, tol: Optional[float]):
+def check_proximity(a: float, b: float, tol: float | None):
     """Used to calculate convergence"""
     if not (a and b and tol):
         return False

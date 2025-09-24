@@ -1,9 +1,10 @@
 import numpy as np
+from numpy.typing import NDArray
 from hmm_analysis.utils.expsum_ops import logexpdot_vector_matrix
 from numba import jit
 
 
-def calc_forward(data: np.ndarray, transition: np.ndarray, emission: np.ndarray, initial: np.ndarray) -> np.ndarray:
+def calc_forward(data: NDArray, transition: NDArray, emission: NDArray, initial: NDArray) -> NDArray:
     # initiate result list
     res = []
 
@@ -19,8 +20,8 @@ def calc_forward(data: np.ndarray, transition: np.ndarray, emission: np.ndarray,
 
 
 @jit(cache=True, nopython=True, fastmath=True)
-def calc_forward_log(data: np.ndarray, transition_log: np.ndarray,
-                     emission_log: np.ndarray, initial_log: np.ndarray) -> np.ndarray:
+def calc_forward_log(data: NDArray, transition_log: NDArray,
+                     emission_log: NDArray, initial_log: NDArray) -> NDArray:
 
     # iterating over data and constructing f_i(k)
     emission_log_transpose = emission_log.T
@@ -35,8 +36,8 @@ def calc_forward_log(data: np.ndarray, transition_log: np.ndarray,
     return res
 
 
-def calc_forward_logexp(data: np.ndarray, transition: np.ndarray,
-                     emission: np.ndarray, initial: np.ndarray) -> np.ndarray:
+def calc_forward_logexp(data: NDArray, transition: NDArray,
+                     emission: NDArray, initial: NDArray) -> NDArray:
 
     # initiate result list
     with np.errstate(divide="ignore"):

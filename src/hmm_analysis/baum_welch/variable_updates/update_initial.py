@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import numpy as np
 from numba import jit
-from typing import List
 from hmm_analysis.utils.expsum_ops import logsumexp_2d
 
 
@@ -14,7 +15,7 @@ def calc_updated_initial_log(state_prob_log: np.ndarray):
 
 
 @jit(nopython=True, fastmath=True, cache=True)
-def calc_updated_initial_log_multi_sequence(state_prob_log_lst: List[np.ndarray]):
+def calc_updated_initial_log_multi_sequence(state_prob_log_lst: list[np.ndarray]):
     result = np.empty((len(state_prob_log_lst), state_prob_log_lst[0].shape[1]))
     for i in range(len(state_prob_log_lst)):
         result[i] = state_prob_log_lst[i][0]

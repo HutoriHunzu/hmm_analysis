@@ -11,10 +11,19 @@ authors = [
 description = "Tools for Hidden Markov Model analysis"
 readme = "README.md"
 requires-python = ">=3.11"
+homepage = "https://github.com/HutoriHunzu/hmm_analysis"
+repository = "https://github.com/HutoriHunzu/hmm_analysis"
+keywords = ["hmm", "hidden-markov-model", "baum-welch", "viterbi", "numba", "machine-learning"]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
 ]
 
 dependencies = [

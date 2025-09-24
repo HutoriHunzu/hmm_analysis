@@ -1,48 +1,76 @@
-# Hidden Markov Model analysis toolkit
-In this package you can find tools that might help you analyze hidden markov model data.
-Usually what we want is either you estimate the model parameters (transmission, emission and initial)
-or to estimate the hidden states given data set and model parameters. To address both problems we implemented 
-the baum-welch algorithm (model's parameters estimation) and reconstruction (max likelihood of hidden states).
+# HMM Analysis Toolkit
 
-To install the package simply clone the git folder and run
-```shell
-pip install -e <PATH_TO_DIR>
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Numba Accelerated](https://img.shields.io/badge/Numba-Accelerated-orange.svg)](https://numba.pydata.org/)
+
+A fast Python package for Hidden Markov Model analysis using NumPy and Numba. Implements the Baum-Welch algorithm for parameter estimation and forward-backward reconstruction for hidden state inference.
+
+## Installation
+
+```bash
+git clone https://github.com/HutoriHunzu/hmm_analysis.git
+cd hmm_analysis
+pip install -e .
 ```
 
+## Quick Start
 
-## Baum-Welch
-### Intro
-This algorithm is a learning algorithm for hidden markov models that allows one to estimate the 
-model parameters given observations. Denoting the observations as $Y_i$, hidden states $X_i$ and model parameters as 
-$\theta$, then it tried to find a $\theta$ such that: $Pr(Y|\theta)$ is maximal.  
-You can find more about it at: https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm
-
-### Usage
-Please refer the `baum_welch_example.py` in the example folder.  
+### Parameter Estimation (Baum-Welch)
 
 ```python
+import numpy as np
 from hmm_analysis import baum_welch
 
-estimations = baum_welch(observations, transition_guess, emission_guess, initial_guess, niters=100)
-transition_estimation, emission_estimation, initial_estimation = estimations
+# Your observation sequence
+observations = np.array([0, 1, 0, 2, 1, 0])
+
+# Initial parameter guesses (required)
+transition_guess = np.array([[0.7, 0.3], [0.4, 0.6]])
+emission_guess = np.array([[0.5, 0.3, 0.2], [0.1, 0.4, 0.5]])
+initial_guess = np.array([0.6, 0.4])
+
+# Estimate parameters
+result = baum_welch(observations, transition_guess, emission_guess, initial_guess, niters=100)
+print("Estimated transition matrix:", result.transition)
+print("Estimated emission matrix:", result.emission)
 ```
-* Note: that the algorithm requires some initial guesses for the model parameters, that is a transmission matrix, 
-emission matrix and initial probability vector.
-* Note: we are using a left multiplication for vector and matrix, e.g. the probability of hidden state $Pr(X_{i+1})$ 
-is calculated as follows: $Pr(X_i) \times T$. Where $Pr(X_i)$ is a row vector and $T$ is the transition matrix.
 
-
-## Reconstruction
-### Intro
-This algorithm is a maximum likelihood based estimation. Given a model with its parameters and a set of observations
-we can use the forward-backward calculation to estimate the probability for all hidden states, that is: $Pr(X_i=j)$ 
-for all $i, j$. Next we simply take the arg maximum over the value, meaning: $X_i = arg\max_{j}Pr(X_i=j)$
-
-### Usage
-Please refer the `reconstruction_example.py` in the example folder.
+### Hidden State Reconstruction
 
 ```python
 from hmm_analysis import reconstruct
 
-reconstructed_path = reconstruct(observations, transition, emission, initial)
+# With known HMM parameters
+hidden_states = reconstruct(observations, transition_matrix, emission_matrix, initial_probs)
+print("Most likely hidden states:", hidden_states)
 ```
+
+### Iterator Access to Training Progress
+
+```python
+from hmm_analysis import baum_welch_iter
+
+# Access intermediate results during training
+for i, result in enumerate(baum_welch_iter(observations, transition_guess, emission_guess, initial_guess, niters=50)):
+    if i % 10 == 0:  # Print every 10th iteration
+        print(f"Iteration {i+1}: Likelihood = {result.likelihood_log}")
+```
+
+## Important Notes
+
+- **Matrix Orientation**: Uses left multiplication convention: `P(X_i) × T` where `P(X_i)` is a row vector and `T` is the transition matrix
+- **Initial Guesses**: Baum-Welch requires reasonable initial parameter estimates to converge properly
+- **Numerical Stability**: All computations performed in log-space using Numba-optimized functions
+
+## Examples
+
+See the `examples/` directory for detailed usage patterns:
+- `baum_welch_example.py` - Parameter estimation walkthrough
+- `reconstruction_example.py` - Hidden state inference
+- `multi_sequence_example.py` - Multiple observation sequences
+
+## Algorithm Reference
+
+For theoretical background, see: https://en.wikipedia.org/wiki/Baum%E2%80%93Welch_algorithm

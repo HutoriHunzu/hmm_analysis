@@ -2,11 +2,25 @@ from hmm_analysis.forward_backward import get_forward_backward_likelihood_log
 from hmm_analysis.baum_welch.estimations.hidden_state_prob import calc_hidden_state_prob_log
 from hmm_analysis.utils.casting import cast_log
 import numpy as np
+from numpy.typing import NDArray
 
 
-def reconstruct(data: np.ndarray, transition: np.ndarray, emission: np.ndarray,
-                initial: np.ndarray):
+def reconstruct(data: NDArray, transition: NDArray, emission: NDArray,
+                initial: NDArray) -> NDArray:
+    """Reconstruct hidden states using maximum likelihood estimation.
 
+    Given HMM parameters and observations, estimates the most likely sequence
+    of hidden states using the forward-backward algorithm.
+
+    Args:
+        data: Observation sequence
+        transition: Transition matrix (left multiplication: P(X_i) * T)
+        emission: Emission matrix
+        initial: Initial probability vector
+
+    Returns:
+        Array of most likely hidden state indices for each observation
+    """
     # casting parameters to log
     transition, emission, initial = cast_log(transition, emission, initial)
 

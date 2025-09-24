@@ -1,11 +1,11 @@
-from tkinter import N
 import numpy as np
+from numpy.typing import NDArray
 from numba import jit
 
 MINUS_INF = -2 ** 32
 
 @jit(cache=True, nopython=True, fastmath=True)
-def logsumexp_3d(m: np.ndarray):
+def logsumexp_3d(m: NDArray):
     """
     e.g. a = [[(1, 0), (1, 1)], [(0, 1), (0, 0)]]
         logsumexp_2d(a) = [(log(e + 1), log(2)), (log(2), log(e + 1))]
@@ -21,7 +21,7 @@ def logsumexp_3d(m: np.ndarray):
 
 
 @jit(cache=True, nopython=True, fastmath=True)
-def logsumexp_2d(m: np.ndarray):
+def logsumexp_2d(m: NDArray):
     """
     e.g. a = [(1, 0), (1, 1)]
         logsumexp_2d(a) = [log(e + 1), log(2e)]
@@ -45,7 +45,7 @@ def logsumexp_2d(m: np.ndarray):
 
 
 @jit(cache=True, nopython=True, fastmath=True)
-def logsumexp_1d(m: np.ndarray):
+def logsumexp_1d(m: NDArray):
     """
     e.g. a = [1, 0, 1, 2]
         logsumexp_1d(a) = log(e + 1 + e + e^2)
@@ -69,16 +69,16 @@ def logsumexp_1d(m: np.ndarray):
 
 
 @jit(cache=True, nopython=True, fastmath=True)
-def logexpdot_matrix_vector(m: np.ndarray, v: np.ndarray):
+def logexpdot_matrix_vector(m: NDArray, v: NDArray):
     return logsumexp_2d(m + v)
 
 @jit(cache=True, nopython=True, fastmath=True)
-def logexpdot_vector_matrix(v: np.ndarray, m: np.ndarray):
+def logexpdot_vector_matrix(v: NDArray, m: NDArray):
     return logsumexp_2d(m.T + v)
 
 
 @jit(cache=True, nopython=True, fastmath=True)
-def logexpdot_matrix_matrix(a: np.ndarray, b: np.ndarray):
+def logexpdot_matrix_matrix(a: NDArray, b: NDArray):
     res = np.zeros((a.shape[0], b.shape[1]))
     b_t = b.T
     for i in range(a.shape[0]):
@@ -87,7 +87,7 @@ def logexpdot_matrix_matrix(a: np.ndarray, b: np.ndarray):
     return res
 
 
-# def logsumexp_1d(m: np.ndarray):
+# def logsumexp_1d(m: NDArray):
 #     pass
 
 # if __name__ == '__main__':
